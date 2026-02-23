@@ -850,6 +850,11 @@
                     </div>
                 </div>
             </div>`;
+        
+        // 通知Storyline feedback已经显示完成
+        if (window.parent && window.parent.SetVar) {
+            window.parent.SetVar('FeedbackComplete', true);
+        }
     }
 
     function restart() {
