@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confetti - Manual Trigger</title>
+    <title>Confetti - Long Duration</title>
     <style>
         * {
             margin: 0;
@@ -45,19 +45,30 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.size = Math.random() * 8 + 4;
-                this.speedX = Math.random() * 6 - 3;
-                this.speedY = Math.random() * -15 - 5;
+                this.size = Math.random() * 8 + 4; // 4-12px
+                this.speedX = Math.random() * 6 - 3; // -3 to 3
+                this.speedY = Math.random() * -15 - 5; // -20 to -5 (向上发射)
                 this.gravity = 0.3;
                 this.friction = 0.99;
                 this.opacity = 1;
                 this.rotation = Math.random() * 360;
                 this.rotationSpeed = Math.random() * 10 - 5;
+                
+                // 随机形状
                 this.shape = Math.random() > 0.5 ? 'square' : 'circle';
                 
+                // 多彩颜色
                 const colors = [
-                    '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
-                    '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B500', '#FF69B4'
+                    '#FF6B6B', // 红色
+                    '#4ECDC4', // 青色
+                    '#45B7D1', // 蓝色
+                    '#FFA07A', // 橙色
+                    '#98D8C8', // 薄荷绿
+                    '#F7DC6F', // 黄色
+                    '#BB8FCE', // 紫色
+                    '#85C1E2', // 天蓝
+                    '#F8B500', // 金色
+                    '#FF69B4'  // 粉色
                 ];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
             }
@@ -66,10 +77,13 @@
                 this.speedY += this.gravity;
                 this.speedX *= this.friction;
                 this.speedY *= this.friction;
+                
                 this.x += this.speedX;
                 this.y += this.speedY;
+                
                 this.rotation += this.rotationSpeed;
                 
+                // 落地后淡出
                 if (this.y > canvas.height - 100) {
                     this.opacity -= 0.02;
                 }
@@ -113,7 +127,7 @@
             positions.forEach((pos, index) => {
                 setTimeout(() => {
                     createConfettiBurst(pos.x, pos.y, 100);
-                }, index * 200);
+                }, index * 200); // 间隔200ms发射
             });
         }
         
@@ -124,6 +138,7 @@
                 confetti.update();
                 confetti.draw();
                 
+                // 移除不可见的粒子
                 if (confetti.opacity <= 0 || confetti.y > canvas.height + 50) {
                     confettiArray.splice(index, 1);
                 }
@@ -132,12 +147,13 @@
             requestAnimationFrame(animate);
         }
         
-        // 暴露给外部调用的函数
-        window.launchConfetti = function() {
-            createMultipleFireworks();
-        }
+        // 页面加载时自动触发
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                createMultipleFireworks();
+            }, 300);
+        });
         
-        // 启动动画循环
         animate();
     </script>
 </body>
