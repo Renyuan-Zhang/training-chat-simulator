@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confetti - Manual Trigger</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: transparent;
+            overflow: hidden;
+        }
+        
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        class Confetti {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 8 + 4;
+                this.speedX = Math.random() * 6 - 3;
+                this.speedY = Math.random() * -15 - 5;
+                this.gravity = 0.3;
+                this.friction = 0.99;
+                this.opacity = 1;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 10 - 5;
+                this.shape = Math.random() > 0.5 ? 'square' : 'circle';
+                
+                const colors = [
+                    '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+                    '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B500', '#FF69B4'
+                ];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            update() {
+                this.speedY += this.gravity;
+                this.speedX *= this.friction;
+                this.speedY *= this.friction;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotationSpeed;
+                
+                if (this.y > canvas.height - 100) {
+                    this.opacity -= 0.02;
+                }
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                
+                if (this.shape === 'square') {
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+                
+                ctx.restore();
+            }
+        }
+        
+        let confettiArray = [];
+        
+        function createConfettiBurst(x, y, count = 80) {
+            for (let i = 0; i < count; i++) {
+                confettiArray.push(new Confetti(x, y));
+            }
+        }
+        
+        function createMultipleFireworks() {
+            const positions = [
+                { x: canvas.width * 0.2, y: canvas.height * 0.8 },
+                { x: canvas.width * 0.5, y: canvas.height * 0.8 },
+                { x: canvas.width * 0.8, y: canvas.height * 0.8 }
+            ];
+            
+            positions.forEach((pos, index) => {
+                setTimeout(() => {
+                    createConfettiBurst(pos.x, pos.y, 100);
+                }, index * 200);
+            });
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            confettiArray.forEach((confetti, index) => {
+                confetti.update();
+                confetti.draw();
+                
+                if (confetti.opacity <= 0 || confetti.y > canvas.height + 50) {
+                    confettiArray.splice(index, 1);
+                }
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // 暴露给外部调用的函数
+        window.launchConfetti = function() {
+            createMultipleFireworks();
+        }
+        
+        // 启动动画循环
+        animate();
+    </script>
+</body>
+</html>
