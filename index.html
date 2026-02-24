@@ -759,13 +759,13 @@
                 })
             });
 
-            if (!res.ok) throw new Error(`Feedback error: ${res.status}`);
+            if (!res.ok) throw new Error(`Feedback API error: ${res.status}`);
             const data = await res.json();
             renderFeedback(data.feedback);
 
         } catch (err) {
             document.getElementById('fbContent').innerHTML =
-                '<div class="error">⚠️ Failed to load feedback. Please try again.</div>';
+                '<div class="error">⚠️ Failed to load feedback. Please refresh the page and try again.</div>';
         }
     }
 
