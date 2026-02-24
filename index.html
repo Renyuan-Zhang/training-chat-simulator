@@ -887,6 +887,20 @@
                     </div>
                 </div>
             </div>`;
+        
+        // 通知外部：Feedback已完成渲染
+        setTimeout(() => {
+            // 方法1: 设置一个全局变量（最简单）
+            window.feedbackComplete = true;
+            
+            // 方法2: 触发自定义事件（更优雅）
+            const event = new CustomEvent('feedbackReady', { 
+                detail: { message: 'Feedback rendering complete' }
+            });
+            window.dispatchEvent(event);
+            
+            console.log('Feedback complete signal sent');
+        }, 100);
     }
 
     function restart() {
